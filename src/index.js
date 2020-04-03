@@ -1,35 +1,23 @@
-import Vue from 'vue';
-debugger;
-let vm = new Vue({
-    el: '#app',
-    data() {
-        return {
-            name: "xiangju",
-            arr: [1,2,3],
-            firstName: '123',
-            lastName: '999'
-        }
-    },
-    computed: {
-        fullName() {
-            return this.firstName + this.lastName;
-        }
-    },
-    watch: {
-        firstName(newValue) {
-            console.log(newValue);
-        },
-        name(newValue) {
-            console.log('更新 name: ', newValue)
-        }
-    },
-})
+import { h, render, patch } from './vdom/index.js';
 
-setTimeout(() => {
-    vm.name = 1;
-    vm.name = 2;
-    vm.name = 3;
-    vm.arr.push(4);
-}, 1000)
-// vm.obj.age = { number: 1 }
-// console.log(vm);
+let oldVnode = h('div', { id: 'container' },
+    h('li', { style: { background: '#f9b' }, key: 'a' }, 'text a'),
+    h('li', { style: { background: '#fb9' }, key: 'b' }, 'text b'),
+    h('li', { style: { background: '#f3a' }, key: 'c' }, 'text c'),
+    h('li', { style: { background: '#f9d' }, key: 'd' }, 'text d'),
+);
+
+
+let container = document.getElementById('app');
+render(oldVnode, container);
+
+let newVnode = h('div', );
+
+// newVnode = h('div', { id: 'container-update' },
+//     h('li', { style: { background: '#f9d' }, key: 'd' }, 'text d'),
+//     h('li', { style: { background: '#f3a' }, key: 'c' }, 'text c'),
+//     h('li', { style: { background: '#fb9' }, key: 'b' }, 'text b'),
+//     h('li', { style: { background: '#f9b' }, key: 'a' }, 'text a'),
+
+// )
+setTimeout(() => patch(oldVnode, newVnode), 1000);
