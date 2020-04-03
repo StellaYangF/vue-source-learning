@@ -1,4 +1,4 @@
-import  { initState } from './observe';
+import { initState } from './observe';
 import Watcher from './observe/watcher';
 import { compiler } from './utils';
 
@@ -6,7 +6,7 @@ function Vue(options) {
     this._init(options);
 }
 
-Vue.prototype._init = function(options) {
+Vue.prototype._init = function (options) {
     let vm = this;
     vm.$options = options;
 
@@ -15,7 +15,7 @@ Vue.prototype._init = function(options) {
     vm.$options.el && vm.$mount();
 }
 
-Vue.prototype.$mount = function() {
+Vue.prototype.$mount = function () {
     let vm = this;
     let el = vm.$options.el;
     el = vm.$el = query(el);
@@ -23,13 +23,18 @@ Vue.prototype.$mount = function() {
     new Watcher(vm, updateComponent);
 }
 
-Vue.prototype._update = function() { 
+Vue.prototype.$watch = function (expr, handler, opts) {
+    let vm = this;
+    new Watcher(vm, expr, handler, { user: true, ...opts });
+}   
+
+Vue.prototype._update = function () {
     let vm = this;
     let el = vm.$el;
 
     let node = document.createDocumentFragment();
     let firstChild;
-    while(firstChild = el.firstChild) {
+    while (firstChild = el.firstChild) {
         node.appendChild(firstChild);
     }
     // compiler

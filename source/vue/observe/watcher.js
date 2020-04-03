@@ -1,5 +1,6 @@
 import { pushTarget, popTarget } from './dep';
 import { nextTick } from './nextTick';
+import { util } from '../utils';
 
 let id = 0;
 
@@ -16,22 +17,38 @@ export default class Watcher {
         this.exprOrFn = exprOrFn;
         if (typeof exprOrFn === 'function') {
             this.getter = exprOrFn;
+        } else {
+            this.getter = function() {
+                return util.getValue(vm, exprOrFn);
+            }
         }
+        if (opts.user) {
+            this.user = true;
+        }
+        this.lazy = opts.lazy;
+        this.dirty = this.lazy;
         this.cb = cb;
         this.deps = [];
         this.depsId = new Set();
         this.opts = opts;
         this.id = id++;
-
+        this.immediate = opts.immediate;
+        this.value = this.lazy ? undefined : this.get();
         this.get();
+    }
+
+    evaluate() {
+        this.value = this.get();
+        this.dirty = false;
     }
 
     get() {
         // 渲染 watcher Dep.target = watcher  
         // msg 变化了 需要让这个 watcher 重新执行
         pushTarget(this);
-        this.getter && this.getter();
+        let value = this.getter && this.getter.call(this.vm);
         popTarget();
+        return value;
     }
 
     addDep(dep) {
@@ -43,13 +60,28 @@ export default class Watcher {
         }
     }
 
+    depend() {
+        let i = this.deps.length;
+        while(i--) {
+            this.deps[i].depend();
+        }
+    }
+
     update() {
         // this.get();
-        queueWatcher(this);
+        if (this.lazy) {
+            this.dirty = true;
+        } else {
+            queueWatcher(this);
+        }
     }
 
     run() {
-        this.get();
+        let value = this.get();
+        if (this.value !== undefined) {
+            this.cb(value, this.value);
+        }
+        // this.get();
     }
 }
 

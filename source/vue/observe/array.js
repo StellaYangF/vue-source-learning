@@ -21,7 +21,8 @@ methods.forEach(method => {
                 break;
         }
         if (inserted) observeArray(inserted);
-        console.log('调用数组更新方法 ', method);
+        console.log(this);
+        this.__ob__.dep.depend();
         return r;
     }
 })
@@ -30,7 +31,18 @@ function observeArray(data) {
     data.forEach(key => observe(key));
 }
 
+function dependArray(value) {
+    // 递归收集数组中的依赖
+    value.forEach(currentItem => {
+        currentItem.__ob__ && currentItem.__ob__.dep.depend();
+        if (Array.isArray(currentItem)){
+            dependArray(currentItem);
+        }
+    })
+}
+
 export {
     arrayMethods,
     observeArray,
+    dependArray,
 }

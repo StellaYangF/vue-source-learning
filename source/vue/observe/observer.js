@@ -26,7 +26,7 @@ export default class Observer {
         // 专门为数组设定
         this.dep = new Dep();
         Object.defineProperty(data, '__ob__', {
-            get: () => this
+            get: () =>  this
         })
         if (Array.isArray(data)) {
             // origin: data.__proto__ => arrayMethods => arrayMethods.__proto__ => Array.prototype

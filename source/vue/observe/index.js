@@ -1,11 +1,13 @@
 import Observer from './observer';
+import Watcher from './watcher';
+import Dep from './dep';
 
 function initState(vm) {
     let opts = vm.$options;
 
     opts.data && initData(vm);
-    opts.computed && initComputed();
-    opts.watch && initWatch();
+    opts.computed && initComputed(vm, opts.computed);
+    opts.watch && initWatch(vm);
 }
 
 function observe(data) {
@@ -35,12 +37,46 @@ function initData(vm) {
     observe(data);
 }
 
-function initComputed() {
-
+function createComputedGetter(vm, key) {
+    let watcher = vm._watchersComputed[key];
+    return function() {
+        if (watcher) {
+            if (watcher.dirty) {
+                watcher.evaluate();
+            }
+            if (Dep.target) {
+                watcher.depend();
+            }
+            return watcher.value;
+        }
+    }
 }
 
-function initWatch() {
+function initComputed(vm, computed) {
+    let watchers = vm._watchersComputed = Object.create(null);
+    Object.keys(computed).forEach(key => {
+        let userDef = computed[key];
+        watchers[key] = new Watcher(vm, userDef, () =>{}, {lazy: true });
+        Object.defineProperty(vm, key, {
+            get: createComputedGetter(vm, key)
+        })
+    })
+}
 
+function initWatch(vm) {
+    let watch = vm.$options.watch;
+    Object.keys(watch).forEach(key => {
+        let userDef = watch[key];
+        let handler = userDef;
+        if (userDef.handler) {
+            handler = userDef.handler;
+        }
+        createWatcher(vm, key, handler, { immediate: userDef.immediate })
+    })
+}
+
+function createWatcher(vm, key, handler, opts){
+    return vm.$watch(key, handler, opts);
 }
 
 export {
