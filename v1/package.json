@@ -1,0 +1,20 @@
+{
+  "name": "vue-mvvm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "html-webpack-plugin": "^4.0.4",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "dev": "webpack-dev-server",
+    "start": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

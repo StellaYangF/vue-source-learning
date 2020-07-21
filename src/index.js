@@ -1,22 +1,32 @@
 import Vue from 'vue';
 
-let vm = new Vue({
+const vm = new Vue({
     el: '#app',
     data() {
         return {
-            a: "a"
+            name: 'stella',
+            age: 18,
+            interests: [{
+                text: 'sing'
+            }, {
+                text: 'dance'
+            }],
+            families: {
+                father: 'Dad',
+                mother: 'Mom'
+            }
         }
-    },
-    render(h) {
-        return h("h1", { style: { background: "#f9b" } }, this.a)
-        // h('div', { id: 'container' },
-        //     h('li', { style: { background: '#f9b' }, key: 'a' }, 'text a'),
-        //     h('li', { style: { background: '#fb9' }, key: 'b' }, 'text b'),
-        //     h('li', { style: { background: '#f3a' }, key: 'c' }, 'text c'),
-        //     h('li', { style: { background: '#f9d' }, key: 'd' }, 'text d'))
-    },
-})
+    }
+});
+/**
+ * 修改的值需要 劫持
+ * 对象每个键也需要劫持
+ * 数组下标不需要劫持
+ * 数组元素 observe 
+ */
+// vm._data.name = { nickname: 'fan' }
+// vm._data.interests[0] = 'bake';
 
-setTimeout(() => {
-    vm.a = "bbbb";
-}, 1000)
+// 代理 vm[key] => vm._data[key]
+vm.interests.push = 'bake';
+
